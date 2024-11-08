@@ -73,6 +73,21 @@ router.put("/:id/available",
     res.json(show);
 })
 
+// Set rating for show
+router.put("/:id/rating/:rating",
+    [isValidShowID(), check("rating").isFloat({ min: 1.0, max: 5.0 }).withMessage("Rating must be between 1 and 5")], // Validators
+    async function(req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        res.status(400).json({ errors : errors.array() });
+        return;
+    }
+    const show = await Show.findByPk(req.params.id);
+    await show.update({rating: req.params.rating});
+    res.json(show);
+    }
+)
+
 // --- DELETE operations ---
 
 // Delete show
