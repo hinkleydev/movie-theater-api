@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { Show } = require("../models/index.js");
+const { User, Show } = require("../models/index.js");
 
 const router = Router();
 
@@ -17,6 +17,12 @@ router.get("/", async function(req, res) {
 router.get("/:id", async function(req, res) {
     const show = await Show.findByPk(req.params.id);
     res.json(show);
+})
+
+// Get all the users that watched a show
+router.get("/:id/users", async function(req, res) {
+    const show = await Show.findByPk(req.params.id, { include: User })
+    res.json(show.users);
 })
 
 // --- UPDATE operations ---
