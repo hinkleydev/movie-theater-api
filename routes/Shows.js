@@ -1,8 +1,21 @@
 const { Router } = require("express");
 const { User, Show } = require("../models/index.js");
 const { Op } = require("../db/connection.js");
+const { check, validationResult, ExpressValidator } = require("express-validator");
 
 const router = Router();
+
+
+// These functions will check the database to see if the show ID is valid
+async function checkShowID(value) {
+    const show = await Show.findByPk(value);
+    if (show == null) {
+        // Not found
+        throw "Show not found";
+    }
+}
+
+const isValidShowID = value => check("id").custom(checkShowID)
 
 // --- CREATE operations ---
 
@@ -31,7 +44,14 @@ router.get("/:id", async function(req, res) {
 })
 
 // Get all the users that watched a show
-router.get("/:id/users", async function(req, res) {
+router.get("/:id/users", 
+    isValidShowID(),
+    async function(req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        res.status(404).json({ errors : errors.array() });
+        return;
+    }
     const show = await Show.findByPk(req.params.id, { include: User })
     res.json(show.users);
 })
@@ -39,17 +59,31 @@ router.get("/:id/users", async function(req, res) {
 // --- UPDATE operations ---
 
 // Toggle availability for show
-router.put("/:id/available", async function(req, res) {
+router.put("/:id/available", 
+    isValidShowID(),
+    async function(req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        res.status(404).json({ errors : errors.array() });
+        return;
+    }
     const show = await Show.findByPk(req.params.id);
-    const available = show.getDataValue("available")
+    const available = show.getDataValue("available");
     show.update({ available: !available });
     res.json(show);
 })
 
-// -- DELETE operations ---
+// --- DELETE operations ---
 
 // Delete show
-router.delete("/:id", async function(req, res) {
+router.delete("/:id",
+    isValidShowID(),
+    async function(req, res) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        res.status(404).json({ errors : errors.array() });
+        return;
+    }
     const show = await Show.findByPk(req.params.id);
     await show.destroy();
     res.status(204).send();
