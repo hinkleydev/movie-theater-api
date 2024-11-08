@@ -27,6 +27,14 @@ router.get("/:id/users", async function(req, res) {
 
 // --- UPDATE operations ---
 
+// Toggle availability for show
+router.put("/:id/available", async function(req, res) {
+    const show = await Show.findByPk(req.params.id);
+    const available = show.getDataValue("available")
+    show.update({ available: !available });
+    res.json(show);
+})
+
 // -- DELETE operations ---
 
 module.exports = { shows: router }
