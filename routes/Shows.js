@@ -37,4 +37,11 @@ router.put("/:id/available", async function(req, res) {
 
 // -- DELETE operations ---
 
+// Delete show
+router.delete("/:id", async function(req, res) {
+    const show = await Show.findByPk(req.params.id);
+    await show.destroy();
+    res.status(204).send();
+})
+
 module.exports = { shows: router }
