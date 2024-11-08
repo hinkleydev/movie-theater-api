@@ -26,6 +26,19 @@ router.get("/:id/shows", async function(req, res) {
 
 // --- UPDATE operations ---
 
-// --- DELETE operations
+// Add a record of a watched show to a users account - /users/:id/shows/:show
+router.put("/:id/shows/:show", async function(req, res) {
+    let user = await User.findByPk(req.params.id);
+    const show = await Show.findByPk(req.params.show);
+    await user.addShow(show);
+    user = await User.findByPk(req.params.id, {include: Show});
+    res.status(201).json(user.shows);
+})
+/* 
+   I'm not sure if this should go under CREATE or UPDATE as it's creating a record
+   of a watched show
+*/
+
+// --- DELETE operations ---
 
 module.exports = { users: router }
