@@ -12,6 +12,12 @@ router.get("/", async function(req, res) {
     res.json(users);
 })
 
+// Get a user - /user/:id
+router.get("/:id", async function(req, res) {
+    const user = await User.findByPk(req.params.id);
+    res.json(user)
+})
+
 // --- UPDATE operations ---
 
 // --- DELETE operations
