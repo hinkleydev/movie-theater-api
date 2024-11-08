@@ -13,6 +13,12 @@ router.get("/", async function(req, res) {
     res.json(shows);
 })
 
+// Get a specific show
+router.get("/:id", async function(req, res) {
+    const show = await Show.findByPk(req.params.id);
+    res.json(show);
+})
+
 // --- UPDATE operations ---
 
 // -- DELETE operations ---
