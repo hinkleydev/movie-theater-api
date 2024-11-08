@@ -21,13 +21,13 @@ const isValidShowID = value => check("id").custom(checkShowID)
 
 // --- READ operations ---
 
-// List all shows
+// List all shows - /shows
 router.get("/", async function(req, res) {
     const shows = await Show.findAll();
     res.json(shows);
 })
 
-// Get a specific show or search by genre
+// Get a specific show or search by genre - /shows/:id
 router.get("/:id", async function(req, res) {
     const show = await Show.findByPk(req.params.id);
     if(show != null) { // If the show matched an ID
@@ -43,7 +43,7 @@ router.get("/:id", async function(req, res) {
     return res.json(shows);
 })
 
-// Get all the users that watched a show
+// Get all the users that watched a show - /shows/:id/users
 router.get("/:id/users", 
     isValidShowID(),
     async function(req, res) {
@@ -58,7 +58,7 @@ router.get("/:id/users",
 
 // --- UPDATE operations ---
 
-// Toggle availability for show
+// Toggle availability for show - /shows/:id/available
 router.put("/:id/available", 
     isValidShowID(),
     async function(req, res) {
@@ -73,7 +73,7 @@ router.put("/:id/available",
     res.json(show);
 })
 
-// Set rating for show
+// Set rating for show - /shows/:id/rating/:rating
 router.put("/:id/rating/:rating",
     [isValidShowID(), check("rating").isFloat({ min: 1.0, max: 5.0 }).withMessage("Rating must be between 1 and 5")], // Validators
     async function(req, res) {
@@ -90,7 +90,7 @@ router.put("/:id/rating/:rating",
 
 // --- DELETE operations ---
 
-// Delete show
+// Delete show - /shows/:id
 router.delete("/:id",
     isValidShowID(),
     async function(req, res) {
