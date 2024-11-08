@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes, Model } = require('sequelize')
+const { Sequelize, DataTypes, Model, Op } = require('sequelize')
 const path = require('path')
 
 const db = new Sequelize('database', 'username', 'password', {
@@ -7,4 +7,4 @@ const db = new Sequelize('database', 'username', 'password', {
   logging: false
 })
 
-module.exports = { db, DataTypes, Model }
+module.exports = { db, DataTypes, Model, Op }

@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { User, Show } = require("../models/index.js");
+const { Op } = require("../db/connection.js");
 
 const router = Router();
 
@@ -13,10 +14,20 @@ router.get("/", async function(req, res) {
     res.json(shows);
 })
 
-// Get a specific show
+// Get a specific show or search by genre
 router.get("/:id", async function(req, res) {
     const show = await Show.findByPk(req.params.id);
-    res.json(show);
+    if(show != null) { // If the show matched an ID
+        res.json(show);
+        return;
+    }
+    const shows = await Show.findAll(
+        { where: 
+            { genre: 
+                { [Op.like] : req.params.id } // Case insensitive comparison
+            } 
+        });
+    return res.json(shows);
 })
 
 // Get all the users that watched a show
